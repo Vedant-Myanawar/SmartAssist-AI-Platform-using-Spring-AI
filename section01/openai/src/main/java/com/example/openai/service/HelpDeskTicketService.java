@@ -1,0 +1,37 @@
+package com.example.openai.service;
+
+import com.example.openai.entity.HelpDeskTicket;
+import com.example.openai.model.TicketRequest;
+import com.example.openai.repository.HelpDeskTicketRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.example.openai.entity.HelpDeskTicket.*;
+
+@Service
+public class HelpDeskTicketService {
+
+    private final HelpDeskTicketRepository helpDeskTicketRepository;
+
+    public HelpDeskTicketService(HelpDeskTicketRepository helpDeskTicketRepository) {
+        this.helpDeskTicketRepository = helpDeskTicketRepository;
+    }
+
+    public HelpDeskTicket createTicket(TicketRequest ticketInput, String username) {
+        HelpDeskTicket ticket = HelpDeskTicket.builder()
+                .issue(ticketInput.issue())
+                .username(username)
+                .status("OPEN")
+                .createdAt(LocalDateTime.now())
+                .eta(LocalDateTime.now().plusDays(7))
+                .build();
+        return helpDeskTicketRepository.save(ticket);
+    }
+
+    public List<HelpDeskTicket> getTicketsByUsername(String username) {
+        return helpDeskTicketRepository.findByUsername(username);
+    }
+}
